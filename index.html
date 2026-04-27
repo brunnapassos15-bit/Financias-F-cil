@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinançasFácil</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header>
+    <h1>FinançasFácil</h1>
+    <p>Seu dinheiro, sob controle.</p>
+  </header>
+
+  <main>
+
+    <!-- PAINEL DE RESUMO -->
+    <section id="resumo">
+      <div class="card">
+        <span>Saldo do mês</span>
+        <strong id="saldo">R$ 0,00</strong>
+      </div>
+      <div class="card">
+        <span>Total de entradas</span>
+        <strong id="total-entradas">R$ 0,00</strong>
+      </div>
+      <div class="card">
+        <span>Total de saídas</span>
+        <strong id="total-saidas">R$ 0,00</strong>
+      </div>
+      <div class="card">
+        <span>Meta guardada</span>
+        <strong id="meta-guardada">R$ 0,00</strong>
+      </div>
+    </section>
+
+    <!-- FORMULÁRIO DE CONFIGURAÇÃO -->
+    <section id="configuracao">
+      <h2>Configuração do mês</h2>
+      <label>Salário mensal (R$)
+        <input type="number" id="salario" placeholder="Ex: 2500">
+      </label>
+      <label>Meta de reserva mensal (R$)
+        <input type="number" id="meta" placeholder="Ex: 500">
+      </label>
+      <button id="btn-salvar-config">Salvar configuração</button>
+    </section>
+
+    <!-- FORMULÁRIO DE TRANSAÇÃO -->
+    <section id="nova-transacao">
+      <h2>Registrar transação</h2>
+      <label>Descrição
+        <input type="text" id="descricao" placeholder="Ex: Almoço, Salário...">
+      </label>
+      <label>Valor (R$)
+        <input type="number" id="valor" placeholder="Ex: 45.00">
+      </label>
+      <label>Tipo
+        <select id="tipo">
+          <option value="saida">Saída (gasto)</option>
+          <option value="entrada">Entrada (recebimento)</option>
+        </select>
+      </label>
+      <label>Categoria
+        <select id="categoria">
+          <option value="alimentacao">Alimentação</option>
+          <option value="transporte">Transporte</option>
+          <option value="lazer">Lazer</option>
+          <option value="saude">Saúde</option>
+          <option value="assinatura">Assinatura</option>
+          <option value="salario">Salário</option>
+          <option value="outros">Outros</option>
+        </select>
+      </label>
+      <button id="btn-adicionar">Adicionar transação</button>
+    </section>
+
+    <!-- LISTA DE TRANSAÇÕES -->
+    <section id="historico">
+      <h2>Histórico</h2>
+      <ul id="lista-transacoes">
+        <li>Nenhuma transação ainda.</li>
+      </ul>
+    </section>
+
+    <!-- PAINEL INTELIGENTE -->
+    <section id="painel-inteligente">
+      <h2>Conselho para o próximo mês</h2>
+      <div id="conselho">
+        Configure seu salário e meta para receber sugestões.
+      </div>
+    </section>
+
+  </main>
+
+<script src="app.js"></script>
+</body>
+
+
+</html>

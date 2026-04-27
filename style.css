@@ -1,0 +1,191 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fdf0f5;
+  color: #3d1a2e;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+header h1 {
+  font-size: 32px;
+  color: #c2547a;
+}
+
+header p {
+  color: #a07080;
+  margin-top: 4px;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+#resumo {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid #f2c4d8;
+}
+
+.card span {
+  font-size: 13px;
+  color: #a07080;
+}
+
+.card strong {
+  font-size: 22px;
+  color: #c2547a;
+}
+
+section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #f2c4d8;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+section h2 {
+  font-size: 18px;
+  color: #3d1a2e;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #6b3a50;
+}
+
+input, select {
+  padding: 10px 14px;
+  border: 1px solid #f2c4d8;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #c2547a;
+}
+
+button {
+  padding: 12px 20px;
+  background-color: #c2547a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #a8405f;
+}
+
+#lista-transacoes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#lista-transacoes li {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fdf0f5;
+  font-size: 14px;
+  color: #a07080;
+}
+
+#conselho {
+  background: #fde8f0;
+  border-left: 4px solid #c2547a;
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  color: #7a2a45;
+  line-height: 1.6;
+}
+
+.transacao {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fdf0f5;
+  gap: 12px;
+}
+
+.transacao-desc {
+  flex: 1;
+  font-weight: 500;
+  color: #3d1a2e;
+}
+
+.transacao-cat {
+  font-size: 12px;
+  color: #a07080;
+  background: #f9dce8;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.transacao-valor {
+  font-weight: 600;
+  min-width: 110px;
+  text-align: right;
+}
+
+.transacao.entrada .transacao-valor {
+  color: #16a34a;
+}
+
+.transacao.saida .transacao-valor {
+  color: #dc2626;
+}
+
+.btn-deletar {
+  background: none;
+  border: none;
+  color: #c2547a;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.btn-deletar:hover {
+  background: #f9dce8;
+}

@@ -3,7 +3,7 @@
 Sistema de controle financeiro pessoal desenvolvido com HTML, CSS e JavaScript puro.
 
 ## Acesse o projeto
-👉 [brunnapassos15-bit.github.io/Financias-F-cil](https://brunnapassos15-bit.github.io/Financias-F-cil)
+👉 [brunnapassos15-bit.github.io/Financias-F-cil](https://brunnapassos15-bit.github.io/Financias-Facil)
 
 ##  Funcionalidades
 

@@ -2,23 +2,61 @@
 // DADOS DO SISTEMA
 // ============================================
 
-let configuracao = {
-  salario: 0,
-  meta: 0
-};
-
+let configuracao = { salario: 0, meta: 0 };
 let transacoes = [];
+let historico = [];
+
+const meses = [
+  'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
+];
 
 // ============================================
 // FUNÇÕES AUXILIARES
 // ============================================
 
 function formatarDinheiro(valor) {
-  return valor.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  });
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
+
+function converterValor(texto) {
+  // Aceita tanto 45.00 quanto 45,00
+  let limpo = texto.replace(/\./g, '').replace(',', '.');
+  return parseFloat(limpo);
+}
+
+function mesAtual() {
+  let d = new Date();
+  return meses[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function salvarDados() {
+  localStorage.setItem('transacoes', JSON.stringify(transacoes));
+  localStorage.setItem('configuracao', JSON.stringify(configuracao));
+  localStorage.setItem('historico', JSON.stringify(historico));
+}
+
+function carregarDados() {
+  let t = localStorage.getItem('transacoes');
+  let c = localStorage.getItem('configuracao');
+  let h = localStorage.getItem('historico');
+
+  if (t) transacoes = JSON.parse(t);
+  if (h) historico = JSON.parse(h);
+  if (c) {
+    configuracao = JSON.parse(c);
+    document.getElementById('salario').value = configuracao.salario || '';
+    document.getElementById('meta').value = configuracao.meta || '';
+  }
+
+  atualizarLista();
+  atualizarPainel();
+  atualizarHistorico();
+}
+
+// ============================================
+// ATUALIZA A TELA
+// ============================================
 
 function calcularTotais() {
   let totalEntradas = 0;
@@ -39,19 +77,12 @@ function calcularTotais() {
   return { totalEntradas, totalSaidas, saldo, metaGuardada };
 }
 
-// ============================================
-// ATUALIZA A TELA
-// ============================================
-
 function atualizarPainel() {
   let totais = calcularTotais();
-
   document.getElementById('total-entradas').textContent = formatarDinheiro(totais.totalEntradas);
   document.getElementById('total-saidas').textContent = formatarDinheiro(totais.totalSaidas);
   document.getElementById('saldo').textContent = formatarDinheiro(totais.saldo);
   document.getElementById('meta-guardada').textContent = formatarDinheiro(totais.metaGuardada);
-
-  atualizarConselho(totais);
 }
 
 function atualizarLista() {
@@ -63,7 +94,6 @@ function atualizarLista() {
   }
 
   lista.innerHTML = '';
-
   for (let i = transacoes.length - 1; i >= 0; i--) {
     let t = transacoes[i];
     let sinal = t.tipo === 'entrada' ? '+' : '-';
@@ -81,41 +111,99 @@ function atualizarLista() {
 }
 
 // ============================================
-// CONSELHO INTELIGENTE
+// HISTÓRICO POR MÊS
 // ============================================
 
-function atualizarConselho(totais) {
-  let conselho = document.getElementById('conselho');
+function atualizarHistorico() {
+  let container = document.getElementById('lista-historico');
 
-  if (configuracao.salario === 0) {
-    conselho.textContent = 'Configure seu salário e meta para receber sugestões.';
+  if (historico.length === 0) {
+    container.innerHTML = '<p class="vazio">Nenhum mês fechado ainda.</p>';
     return;
   }
 
-  let deficit = configuracao.meta - totais.metaGuardada;
+  container.innerHTML = '';
+  for (let i = historico.length - 1; i >= 0; i--) {
+    let m = historico[i];
+    let itens = m.transacoes.map(t => {
+      let sinal = t.tipo === 'entrada' ? '+' : '-';
+      let cor = t.tipo === 'entrada' ? 'entrada' : 'saida';
+      return `<li class="transacao ${cor}">
+        <span class="transacao-desc">${t.descricao}</span>
+        <span class="transacao-cat">${t.categoria}</span>
+        <span class="transacao-valor">${sinal} ${formatarDinheiro(t.valor)}</span>
+      </li>`;
+    }).join('');
 
-  if (deficit <= 0) {
-    conselho.innerHTML = `
-      Parabéns! Você guardou ${formatarDinheiro(totais.metaGuardada)} este mês
-      e atingiu sua meta de ${formatarDinheiro(configuracao.meta)}.
-      Continue assim no próximo mês!
+    container.innerHTML += `
+      <div class="mes-card">
+        <div class="mes-header" onclick="toggleMes(this)">
+          <h3>📅 ${m.mes}</h3>
+          <div class="mes-resumo">
+            <span>Entradas: <span class="ev">${formatarDinheiro(m.totalEntradas)}</span></span>
+            <span>Saídas: <span class="es">${formatarDinheiro(m.totalSaidas)}</span></span>
+            <span>Saldo: <strong>${formatarDinheiro(m.saldo)}</strong></span>
+          </div>
+        </div>
+        <div class="mes-body" style="display:none">
+          <ul>${itens}</ul>
+        </div>
+      </div>
     `;
+  }
+}
+
+function toggleMes(header) {
+  let body = header.nextElementSibling;
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+
+function fecharMes() {
+  if (transacoes.length === 0) {
+    alert('Não há transações para fechar o mês.');
     return;
   }
 
-  let limiteProximoMes = configuracao.salario - configuracao.meta - deficit;
-  let corteNecessario = deficit;
+  let totais = calcularTotais();
+  let mes = {
+    mes: mesAtual(),
+    transacoes: [...transacoes],
+    totalEntradas: totais.totalEntradas,
+    totalSaidas: totais.totalSaidas,
+    saldo: totais.saldo
+  };
 
-  conselho.innerHTML = `
-    Você não conseguiu guardar os ${formatarDinheiro(configuracao.meta)} esse mês.
-    Faltaram ${formatarDinheiro(deficit)}.
-    <br><br>
-    <strong>Para o próximo mês:</strong><br>
-    Seu limite de gastos será ${formatarDinheiro(limiteProximoMes)}.
-    Corte ${formatarDinheiro(corteNecessario)} dos gastos de lazer,
-    assinaturas e restaurantes para repor o que faltou
-    e ainda guardar sua meta.
-  `;
+  historico.push(mes);
+  transacoes = [];
+  configuracao = { salario: 0, meta: 0 };
+
+  document.getElementById('salario').value = '';
+  document.getElementById('meta').value = '';
+
+  salvarDados();
+  atualizarLista();
+  atualizarPainel();
+  atualizarHistorico();
+
+  alert('Mês fechado e salvo no histórico!');
+  mostrarAba('historico');
+}
+
+// ============================================
+// ABAS
+// ============================================
+
+function mostrarAba(aba) {
+  document.getElementById('aba-inicio').classList.toggle('escondido', aba !== 'inicio');
+  document.getElementById('aba-historico').classList.toggle('escondido', aba !== 'historico');
+
+  document.querySelectorAll('.aba').forEach(function(btn) {
+    btn.classList.remove('ativa');
+  });
+
+  let abas = document.querySelectorAll('.aba');
+  if (aba === 'inicio') abas[0].classList.add('ativa');
+  if (aba === 'historico') abas[1].classList.add('ativa');
 }
 
 // ============================================
@@ -123,10 +211,8 @@ function atualizarConselho(totais) {
 // ============================================
 
 function deletarTransacao(id) {
-  transacoes = transacoes.filter(function(t) {
-    return t.id !== id;
-  });
-
+  transacoes = transacoes.filter(function(t) { return t.id !== id; });
+  salvarDados();
   atualizarLista();
   atualizarPainel();
 }
@@ -136,60 +222,44 @@ function deletarTransacao(id) {
 // ============================================
 
 document.getElementById('btn-salvar-config').addEventListener('click', function() {
-  let salario = parseFloat(document.getElementById('salario').value);
-  let meta = parseFloat(document.getElementById('meta').value);
+  let salario = converterValor(document.getElementById('salario').value);
+  let meta = converterValor(document.getElementById('meta').value);
 
-  if (isNaN(salario) || salario <= 0) {
-    alert('Digite um salário válido.');
-    return;
-  }
-
-  if (isNaN(meta) || meta <= 0) {
-    alert('Digite uma meta válida.');
-    return;
-  }
-
-  if (meta >= salario) {
-    alert('A meta não pode ser maior ou igual ao salário.');
-    return;
-  }
+  if (isNaN(salario) || salario <= 0) { alert('Digite um salário válido.'); return; }
+  if (isNaN(meta) || meta <= 0) { alert('Digite uma meta válida.'); return; }
+  if (meta >= salario) { alert('A meta não pode ser maior ou igual ao salário.'); return; }
 
   configuracao.salario = salario;
   configuracao.meta = meta;
 
+  salvarDados();
   alert(`Configuração salva! Você pode gastar até ${formatarDinheiro(salario - meta)} este mês.`);
   atualizarPainel();
 });
 
 document.getElementById('btn-adicionar').addEventListener('click', function() {
   let descricao = document.getElementById('descricao').value.trim();
-  let valor = parseFloat(document.getElementById('valor').value);
+  let valor = converterValor(document.getElementById('valor').value);
   let tipo = document.getElementById('tipo').value;
   let categoria = document.getElementById('categoria').value;
 
-  if (descricao === '') {
-    alert('Digite uma descrição.');
-    return;
-  }
+  if (descricao === '') { alert('Digite uma descrição.'); return; }
+  if (isNaN(valor) || valor <= 0) { alert('Digite um valor válido.'); return; }
 
-  if (isNaN(valor) || valor <= 0) {
-    alert('Digite um valor válido.');
-    return;
-  }
-
-  let novaTransacao = {
-    id: Date.now(),
-    descricao,
-    valor,
-    tipo,
-    categoria
-  };
-
-  transacoes.push(novaTransacao);
+  transacoes.push({ id: Date.now(), descricao, valor, tipo, categoria });
 
   document.getElementById('descricao').value = '';
   document.getElementById('valor').value = '';
 
+  salvarDados();
   atualizarLista();
   atualizarPainel();
 });
+
+// Adiciona botão fechar mês na seção de transações
+document.getElementById('historico-mes').insertAdjacentHTML('beforeend',
+  '<button class="btn-fechar-mes" onclick="fecharMes()">📦 Fechar mês e arquivar</button>'
+);
+
+// Carrega tudo ao abrir
+carregarDados();

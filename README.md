@@ -12,7 +12,6 @@ Sistema de controle financeiro pessoal desenvolvido com HTML, CSS e JavaScript p
 - Visualizar saldo, total de entradas e saídas em tempo real
 - Definir meta de reserva mensal
 - Excluir transações registradas por engano
-- Conselho inteligente para o próximo mês — calcula o déficit e sugere cortes nos gastos de luxo para bater a meta
 
 ## 🛠️ Tecnologias utilizadas
 
@@ -26,7 +25,6 @@ Sistema de controle financeiro pessoal desenvolvido com HTML, CSS e JavaScript p
 1. Configure seu salário e meta de reserva mensal
 2. Registre suas entradas e saídas ao longo do mês
 3. Acompanhe o painel de resumo em tempo real
-4. Receba o conselho automático para o próximo mês caso não atinja a meta
 
 ##  Sobre
 
